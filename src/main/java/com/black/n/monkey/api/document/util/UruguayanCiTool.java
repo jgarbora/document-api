@@ -87,4 +87,12 @@ public class UruguayanCiTool {
         return String.format("%s-%s", StringUtils.substring(id, 0, id.length() - 1), StringUtils.substring(id, id.length() - 1));
     }
 
+    public static Integer findCheckDigit(String ci) {
+        for (int i = 0; i <= 9; i++) {
+            if (isValidWithoutException(ci + i)) {
+                return i;
+            }
+        }
+        throw new InvalidUruguayanCiException(String.format("couldn't find check digit for ci: %s", ci));
+    }
 }

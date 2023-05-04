@@ -46,7 +46,7 @@ public class DocumentController {
                                                                          @RequestParam("document-number") String documentNumber,
                                                                          @RequestParam("check-digit") String checkDigit) {
 
-        if (CountryCode.UY.getAlpha2().equals(country.toUpperCase()) && "IDE".equals(documentType.toUpperCase())) {
+        if (isAnUruguayanCI(country, documentType)) {
             if (UruguayanCiTool.isValidWithoutException(documentNumber + checkDigit)) {
                 return ResponseEntity.ok(new ValidateCheckDigitResponse("valid CI", true));
             } else {
@@ -56,10 +56,29 @@ public class DocumentController {
 
         return new ResponseEntity("no country / document validations for this yet", HttpStatus.NO_CONTENT);
     }
+
+    @GetMapping("/country/{country}/find-check-digit")
+    public ResponseEntity<FindCheckDigitResponse> findCheckDigit(@PathVariable String country,
+                                                                 @RequestParam("document-type") String documentType,
+                                                                 @RequestParam("document-number") String documentNumber) {
+
+        if (isAnUruguayanCI(country, documentType)) {
+            return ResponseEntity.ok(new FindCheckDigitResponse(UruguayanCiTool.findCheckDigit(documentNumber)));
+        }
+
+        return new ResponseEntity("no country / document validations for this yet", HttpStatus.NO_CONTENT);
+    }
+
+    private boolean isAnUruguayanCI(String countryCodeAlpha2, String documentType) {
+        return CountryCode.UY.getAlpha2().equals(countryCodeAlpha2.toUpperCase()) && "IDE".equals(documentType.toUpperCase());
+    }
 }
 
 record CountryTypesResponse(Set<String> documentTypes) {
 }
 
 record ValidateCheckDigitResponse(String message, Boolean isValid) {
+}
+
+record FindCheckDigitResponse(Integer checkDigit) {
 }
