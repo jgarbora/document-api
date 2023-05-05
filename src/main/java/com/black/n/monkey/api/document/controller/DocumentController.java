@@ -3,9 +3,11 @@ package com.black.n.monkey.api.document.controller;
 import com.black.n.monkey.api.document.CountryService;
 import com.black.n.monkey.api.document.dto.CountriesResponse;
 import com.black.n.monkey.api.document.util.UruguayanCiTool;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.neovisionaries.i18n.CountryCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,6 +69,16 @@ public class DocumentController {
         }
 
         return new ResponseEntity("no country / document validations for this yet", HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping(value = "/whatever", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity whatever(@RequestBody JsonNode request) {
+        return ResponseEntity.ok(request);
+    }
+
+    @PostMapping(value = "/throw-an-exception", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity throwAnException(@RequestBody JsonNode request) {
+        throw new RuntimeException("for dev purpose");
     }
 
     private boolean isAnUruguayanCI(String countryCodeAlpha2, String documentType) {

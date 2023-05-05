@@ -50,15 +50,21 @@ public class RequestResponse {
 
     private Integer responseStatusCode;
 
-    private String requestBody;
+    @Type(JsonType.class)
+    @Column(columnDefinition = "json")
+    private JsonNode requestBody;
 
-    private String responseBody;
+    @Type(JsonType.class)
+    @Column(columnDefinition = "json")
+    private JsonNode responseBody;
 
     private long executionTimeInMillis;
 
     private LocalDateTime requestDateAtUtc;
 
-    private String exception;
+    @Type(JsonType.class)
+    @Column(columnDefinition = "json")
+    private JsonNode exception;
 
     private String clientId;
 }
