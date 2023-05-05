@@ -1,23 +1,50 @@
 package com.black.n.monkey.api.document.domain;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.databind.JsonNode;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 
 @Setter
 @Getter
 @Builder
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class RequestResponse {
 
-    private Map<String, List<String>> requestHeaders;
+    @Id
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator",
+            parameters = {
+                    @Parameter(
+                            name = "uuid_gen_strategy_class",
+                            value = "org.hibernate.id.uuid.CustomVersionOneStrategy"
+                    )
+            }
+    )
+    private UUID id;
 
-    private String requestURI;
+    @Type(JsonType.class)
+    @Column(columnDefinition = "json")
+    private JsonNode requestHeaders;
 
-    private Map<String, List<String>> responseHeaders;
+    private String requestUri;
+
+    @Type(JsonType.class)
+    @Column(columnDefinition = "json")
+    private JsonNode responseHeaders;
 
     private String httpVerb;
 

@@ -1,6 +1,8 @@
 package com.black.n.monkey.api.document.controller.util;
 
 import com.black.n.monkey.api.document.domain.RequestResponse;
+import com.black.n.monkey.api.document.repository.RequestResponseRepository;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,6 +26,8 @@ public class RequestResponseLogger extends OncePerRequestFilter {
     private final ObjectMapper mapper;
     private final Set<String> headers2sanitize = Set.of("authorization");
 
+    private final RequestResponseRepository requestResponseRepository;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
@@ -31,7 +35,7 @@ public class RequestResponseLogger extends OncePerRequestFilter {
 
         RequestResponse requestResponse = RequestResponse.builder()
                 .requestHeaders(buildHeaders(request))
-                .requestURI(request.getRequestURI())
+                .requestUri(request.getRequestURI())
                 .requestDateAtUtc(LocalDateTime.now(Clock.systemUTC()))
                 .httpVerb(request.getMethod())
                 .clientId(request.getUserPrincipal() != null ? request.getUserPrincipal().getName() : "anonymous")
@@ -43,24 +47,27 @@ public class RequestResponseLogger extends OncePerRequestFilter {
         requestResponse.setResponseStatusCode(response.getStatus());
         requestResponse.setExecutionTimeInMillis(System.currentTimeMillis() - startTime);
 
-        logger.info(String.format("headers: %s", mapper.writeValueAsString(requestResponse)));
+        // TODO
+        // map exception
+        // map request body
+        // map response body
+        requestResponseRepository.save(requestResponse);
     }
 
     // https://stackoverflow.com/questions/33744875/spring-boot-how-to-log-all-requests-and-responses-with-exceptions-in-single-pl
 
 
-    private Map<String, List<String>> buildHeaders(HttpServletRequest request) {
+    private JsonNode buildHeaders(HttpServletRequest request) {
         Map<String, List<String>> headers = new HashMap<>();
         Iterator<String> it = request.getHeaderNames().asIterator();
         while (it.hasNext()) {
             String header = it.next();
-
             headers.put(header, headers2sanitize.contains(header) ? List.of("***") : List.of(request.getHeader(header)));
         }
-        return headers;
+        return mapper.valueToTree(headers);
     }
 
-    private Map<String, List<String>> buildHeaders(HttpServletResponse response) {
+    private JsonNode buildHeaders(HttpServletResponse response) {
         Map<String, List<String>> headers = new HashMap<>();
         Iterator<String> it = response.getHeaderNames().iterator();
         while (it.hasNext()) {
@@ -68,7 +75,7 @@ public class RequestResponseLogger extends OncePerRequestFilter {
 
             headers.put(header, headers2sanitize.contains(header) ? List.of("***") : List.of(response.getHeader(header)));
         }
-        return headers;
+        return mapper.valueToTree(headers);
     }
 
 
