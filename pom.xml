@@ -13,7 +13,7 @@
 	<artifactId>document-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>my-service-api</name>
-	<description></description>
+	<description/>
 
 	<properties>
 		<java.version>18</java.version>
@@ -49,7 +49,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.26</version>
+			<version>1.18.28</version>
 			<scope>provided</scope>
 		</dependency>
 
