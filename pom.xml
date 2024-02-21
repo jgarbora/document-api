@@ -13,7 +13,7 @@
 	<artifactId>document-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>my-service-api</name>
-	<description></description>
+	<description/>
 
 	<properties>
 		<java.version>18</java.version>
@@ -85,7 +85,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.6.0</version>
+			<version>42.7.2</version>
 		</dependency>
 
 		<!-- https://github.com/vladmihalcea/hypersistence-utils -->
